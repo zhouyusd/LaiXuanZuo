@@ -1,0 +1,47 @@
+server:
+  port: 4321
+
+spring:
+  profiles:
+    active: ${env:prod}
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://127.0.0.1:3306/laixuanzuo?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=GMT-8
+    username: ${MYSQL_USER:root}
+    password: ${MYSQL_PASSWORD:123456}
+
+  redis:
+    host: 127.0.0.1
+    port: 6379
+    password:
+    timeout: 3000
+    lettuce:
+      pool:
+        max-active: 1000
+        max-idle: 100
+        min-idle: 10
+        max-wait: 3000
+
+  thymeleaf:
+    prefix: classpath:/templates/
+    suffix: .html
+    mode: HTML
+    encoding: UTF-8
+    cache: false
+
+  messages:
+    basename: i18n/message
+
+  devtools:
+    restart:
+      enabled: true
+
+logging:
+  config: classpath:logback-spring.xml

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/header.html :: commonHead(~{::title})">
+	<title>[[#{web.route.tasks}]]</title>
+</head>
+<body>
+<div th:replace="fragments/header.html :: navBar ('TASKS')"></div>
+
+<div class="container">
+	<div class="table-responsive">
+		<table class="table">
+			<thead>
+			<tr>
+				<th>ID</th>
+				<!--				<th width="270">WeChat SessionID</th>-->
+				<th th:text="#{task.table.header.position}">位置</th>
+				<th th:text="#{task.table.header.cron}">Cron表达式</th>
+				<th th:text="#{task.table.header.status}">状态</th>
+				<th th:text="#{task.table.header.lastUpdateTime}">最近更新时间</th>
+				<th th:text="#{task.table.header.remarks}">备注</th>
+				<th>
+					<button class="btn btn-primary btn-sm">新建</button>
+				</th>
+			</tr>
+			</thead>
+			<tbody>
+			<tr th:each="task : ${tasks}">
+				<td th:text="${task.getId()}"></td>
+				<!--				<td th:text="${task.getWechatSessionID()}"></td>-->
+				<td th:text="${task.getPosition()}"></td>
+				<td>
+					<a th:onclick="getCronExample([[${task.getCronExpression()}]])" style="cursor: pointer;"
+					   th:text="${task.getCronExpression()}"></a>
+				</td>
+				<td>
+					<span th:if="${task.getStatus()}" class="label label-success">ON</span>
+					<span th:unless="${task.getStatus()}" class="label label-danger">OFF</span>
+				</td>
+				<td th:text="${#dates.format(task.getUpdateTime(), 'yyyy-MM-dd HH:mm:ss.SSS')}"></td>
+				<td th:text="${task.getRemarks()}"></td>
+			</tr>
+			</tbody>
+		</table>
+	</div>
+
+	<div class="modal fade" id="cronExample" tabindex="-1" role="dialog" aria-labelledby="cronExampleModalLabel">
+		<div class="modal-dialog modal-sm" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+									aria-hidden="true">&times;</span>
+					</button>
+					<h4 class="modal-title" id="cronExampleModalLabel">[[#{task.cron.title}]]</h4>
+				</div>
+				<div class="modal-body">
+					<code style="padding: 0" id="cronExampleContent"></code>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div th:include="fragments/footer.html :: commonScripts"></div>
+</body>
+</html>
