@@ -23,4 +23,5 @@ public class Task {
     private Boolean isDeleted;
     private Date createTime;
     private Date updateTime;
+    private String message;
 }
