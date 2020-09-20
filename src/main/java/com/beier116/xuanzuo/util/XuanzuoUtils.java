@@ -78,8 +78,8 @@ public class XuanzuoUtils {
                     return "已经预定成功";
                 } else if (flag == 2) {
                     try {
-                        log.info("预定还未开始，{}ms 后继续", 1000);
-                        Thread.sleep(1000);
+                        log.info("预定还未开始，{}ms 后继续", 200);
+                        Thread.sleep(200);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }

@@ -31,7 +31,7 @@ public class LaiXuanZuoHttpClient {
         URIBuilder uriBuilder = null;
         try {
             uriBuilder = new URIBuilder("https://api.qqe2.com/cron");
-            uriBuilder.setParameter("CronExpression",cronExpression);
+            uriBuilder.setParameter("CronExpression", cronExpression);
         } catch (URISyntaxException e) {
             e.printStackTrace();
         }
