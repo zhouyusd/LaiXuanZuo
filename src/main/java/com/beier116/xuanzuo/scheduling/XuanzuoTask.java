@@ -19,7 +19,10 @@ public class XuanzuoTask {
         assert params1.length == 2;
         LibTool libTool = new LibTool(params1[0], true);
         String[] params2 = params1[1].split(",");
-        assert params2.length == 3;
-        libTool.addSeat(params2[0], params2[1], params2[2]).reserve();
+        assert params2.length % 3 == 0;
+        for (int i = 0; i < params2.length; i += 3) {
+            libTool.addSeat(params2[i], params2[i + 1], params2[i + 2]);
+        }
+        libTool.reserve();
     }
 }

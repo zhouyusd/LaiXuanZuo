@@ -30,17 +30,24 @@ public class TaskServiceImpl implements ITaskService {
     @Override
     @Transactional
     public Boolean insertTask(Task task) {
-        Task t =
-                taskDao.findTaskByWechatSessionIDEqualsAndMethodNameEquals(
-                        task.getWechatSessionID(), task.getMethodName());
-        if (t != null) {
-            log.info("任务已存在，不要重复添加");
-            return false;
-        }
-        try {
+        if (task.getId() == null) {
+            Task t =
+                    taskDao.findTaskByWechatSessionIDEqualsAndMethodNameEquals(
+                            task.getWechatSessionID(), task.getMethodName());
+            if (t != null) {
+                log.info("任务已存在，不要重复添加");
+                return false;
+            }
             task.setCreateTime(new Date());
             task.setUpdateTime(new Date());
             task.setIsDeleted(false);
+        }
+        try {
+            if (task.getId() != null) {
+                if (taskDao.getOne(task.getId()) == null) {
+                    return false;
+                }
+            }
             taskDao.saveAndFlush(task);
             log.info("添加任务成功");
             return true;
@@ -58,6 +65,7 @@ public class TaskServiceImpl implements ITaskService {
             if (t != null) {
                 MyBeanUtils.copyPropertiesIgnoreNull(task, t);
                 t.setUpdateTime(new Date());
+                System.out.println(t);
                 taskDao.saveAndFlush(t);
                 return true;
             }

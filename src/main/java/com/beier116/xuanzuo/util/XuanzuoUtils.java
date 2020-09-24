@@ -65,7 +65,12 @@ public class XuanzuoUtils {
 
     public static String getCodeStr(Site site) {
         LaiXuanZuoHttpClient httpClient = new LaiXuanZuoHttpClient();
-        String jsText = null;
+        String jsText = "";
+        try {
+            Thread.sleep(10);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         do {
             Object indexHtml = httpClient.get(XuanzuoConfig.indexUrl, site);
             if (indexHtml instanceof Integer) {
@@ -78,8 +83,8 @@ public class XuanzuoUtils {
                     return "已经预定成功";
                 } else if (flag == 2) {
                     try {
-                        log.info("预定还未开始，{}ms 后继续", 200);
-                        Thread.sleep(200);
+                        log.info("预定还未开始，{}ms 后继续", 1500);
+                        Thread.sleep(1500);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
@@ -89,10 +94,19 @@ public class XuanzuoUtils {
                 }
             } else if (indexHtml instanceof String) {
                 String html = (String) indexHtml;
+//                log.warn("html: {}", html);
                 String jsUrl = XuanzuoUtils.getJsUrl(html);
-                jsText = (String) httpClient.get(jsUrl, site);
+                log.warn("JSUrl: {}", jsUrl);
+                if (jsUrl != null) {
+                    Object tt = httpClient.get(jsUrl, site);
+                    if (tt instanceof String)
+                        jsText = (String) tt;
+                    else {
+                        log.error("获取JSText时发生未知错误");
+                    }
+                }
             }
-        } while (jsText == null || XuanzuoUtils.getTestCode(jsText));
+        } while (XuanzuoUtils.getTestCode(jsText));
 
         String jsonStr = XuanzuoUtils.getJsonStr(jsText);
         String decStr = XuanzuoUtils.getDecStr(jsText);

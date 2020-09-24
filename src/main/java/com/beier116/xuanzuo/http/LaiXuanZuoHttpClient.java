@@ -69,12 +69,14 @@ public class LaiXuanZuoHttpClient {
             HttpEntity entity = httpResponse.getEntity();
             String result = EntityUtils.toString(entity, "UTF-8");
 //            log.error(result);
-            if (result.contains("已经预定了"))
-                return 1;
-            if (result.contains("不在预约时间内"))
-                return 2;
-            if (result.contains("请在微信客户端打开链接"))
-                return 3;
+            if (!url.endsWith(".js")) {
+                if (result.contains("已经预定了"))
+                    return 1;
+                if (result.contains("不在预约时间内"))
+                    return 2;
+                if (result.contains("请在微信客户端打开链接"))
+                    return 3;
+            }
             return result;
         } catch (Exception e) {
             return -1;

@@ -1,14 +1,17 @@
 package com.beier116.xuanzuo.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.Date;
 
 @Data
 @Entity
 @Table(name = "lxz_task")
-public class Task {
+@JsonIgnoreProperties({"hibernateLazyInitializer","handler"})
+public class Task implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

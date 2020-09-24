@@ -1,7 +1,9 @@
 package com.beier116.xuanzuo.controller;
 
+import com.beier116.xuanzuo.common.RestResponse;
 import com.beier116.xuanzuo.http.LaiXuanZuoHttpClient;
 import com.beier116.xuanzuo.http.Site;
+import com.beier116.xuanzuo.scheduling.CronTaskRegistrar;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Controller;
@@ -18,9 +20,18 @@ public class IndexController {
     @Autowired
     private RedisTemplate<String, String> redisTemplate;
 
+    @Autowired
+    private CronTaskRegistrar cronTaskRegistrar;
+
     @RequestMapping("/")
     public String index() {
         return "redirect:/tasks";
+    }
+
+    @ResponseBody
+    @GetMapping("/general/tasknum")
+    public RestResponse<Integer> taskNum() {
+        return RestResponse.ok("/general/tasknum", cronTaskRegistrar.getScheduledTasks().size());
     }
 
     @ResponseBody

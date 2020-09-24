@@ -19,7 +19,7 @@
 				<th th:text="#{task.table.header.lastUpdateTime}">最近更新时间</th>
 				<th th:text="#{task.table.header.remarks}">备注</th>
 				<th>
-					<button class="btn btn-primary btn-sm">新建</button>
+					<button class="btn btn-primary btn-sm" data-toggle="modal" data-target="#addTaskModal">新建</button>
 				</th>
 			</tr>
 			</thead>
@@ -38,9 +38,121 @@
 				</td>
 				<td th:text="${#dates.format(task.getUpdateTime(), 'yyyy-MM-dd HH:mm:ss.SSS')}"></td>
 				<td th:text="${task.getRemarks()}"></td>
+				<td>
+					<button th:if="${task.getMethodName()} eq 'reserve'" class="btn btn-primary btn-sm"
+					        th:onclick="showEditTaskModal([[${task}]])" data-toggle="modal"
+					        data-target="#editTaskModal">编辑
+					</button>
+				</td>
 			</tr>
 			</tbody>
 		</table>
+	</div>
+
+	<div class="modal fade" id="addTaskModal" tabindex="-1" role="dialog"
+	     aria-labelledby="addTaskModalLabel">
+		<div class="modal-dialog modal-sm" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" onclick="$('#add-task-msg').empty();" class="close" data-dismiss="modal"
+					        aria-label="Close"><span aria-hidden="true">&times;</span>
+					</button>
+					<h4 class="modal-title" id="addTaskModalLabel">[[#{task.table.header.new}]]</h4>
+				</div>
+				<div class="modal-body" style="padding-bottom: 0">
+					<form id="add-task-form">
+						<input type="text" style="display: none" id="invalidSessionID" th:value="#{task.entity.invalidSessionID}"/>
+						<input type="text" style="display: none" id="invalidPosition" th:value="#{task.entity.invalidPosition}"/>
+						<input type="text" style="display: none" id="invalidStatus" th:value="#{task.entity.invalidStatus}"/>
+						<input type="text" style="display: none" id="invalidRemarks" th:value="#{task.entity.remarks}"/>
+						<input type="text" style="display: none" id="addFailed" th:value="#{task.entity.addFailed}"/>
+						<input type="text" style="display: none" id="editFailed" th:value="#{task.entity.editFailed}"/>
+						<input type="text" style="display: none" id="beanName" value="xuanzuoTask"/>
+						<input type="text" style="display: none" id="methodName" value="reserve"/>
+						<div class="form-group">
+							<input type="text" class="form-control" id="task-wechat-session-id"
+							       th:placeholder="#{task.entity.session}">
+						</div>
+						<div class="form-group">
+							<!--<label for="login-password" class="form-control-label">Password:</label>-->
+							<input type="text" class="form-control" id="task-position"
+							       th:placeholder="#{task.entity.position}">
+						</div>
+						<div class="form-group">
+							<label class="radio-inline">
+								<input type="radio" checked name="task-status" id="task-status-1" value="true">开启
+							</label>
+							<label class="radio-inline">
+								<input type="radio" name="task-status" id="task-status-2" value="false">关闭
+							</label>
+						</div>
+						<div class="form-group">
+							<select class="form-control" id="task-remarks">
+								<option value="-1" th:text="#{task.entity.remarks}"></option>
+								<option value="于涛">于涛</option>
+								<option value="郑华琦">郑华琦</option>
+								<option value="邓鑫">邓鑫</option>
+							</select>
+						</div>
+					</form>
+				</div>
+				<div class="modal-footer">
+					<div id="add-task-msg">
+					</div>
+					<!--							<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>-->
+					<button type="button" onclick="newTask()" class="btn btn-primary btn-block">[[#{task.table.header.new}]]
+					</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="modal fade" id="editTaskModal" tabindex="-1" role="dialog"
+	     aria-labelledby="editTaskModalLabel">
+		<div class="modal-dialog modal-sm" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" onclick="$('#edit-task-msg').empty();" class="close" data-dismiss="modal"
+					        aria-label="Close"><span aria-hidden="true">&times;</span>
+					</button>
+					<h4 class="modal-title" id="editTaskModalLabel">[[#{task.table.header.edit}]]</h4>
+				</div>
+				<div class="modal-body" style="padding-bottom: 0">
+					<form id="edit-task-form">
+						<div class="form-group">
+							<label class="col-sm-3 control-label">ID</label>
+							<div class="col-sm-9">
+								<p class="form-control-static" style="padding-top: 0" id="edit-task-id">undefined</p>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-3 control-label" th:text="#{task.table.header.remarks}"></label>
+							<div class="col-sm-9">
+								<p class="form-control-static" style="padding-top: 0" id="edit-task-remarks">undefined</p>
+							</div>
+						</div>
+						<div class="form-group">
+							<input type="text" class="form-control" id="edit-task-wechat-session-id"
+							       th:placeholder="#{task.entity.session}">
+						</div>
+						<div class="form-group">
+							<!--<label for="login-password" class="form-control-label">Password:</label>-->
+							<input type="text" class="form-control" id="edit-task-position"
+							       th:placeholder="#{task.entity.position}">
+						</div>
+						<div class="form-group" id="edit-status-id">
+						</div>
+					</form>
+				</div>
+				<div class="modal-footer">
+					<div id="edit-task-msg">
+					</div>
+					<!--							<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>-->
+					<button type="button" onclick="editTask()" class="btn btn-primary btn-block">[[#{task.table.header.edit}]]
+					</button>
+				</div>
+			</div>
+		</div>
 	</div>
 
 	<div class="modal fade" id="cronExample" tabindex="-1" role="dialog" aria-labelledby="cronExampleModalLabel">

@@ -26,6 +26,14 @@ public class TaskController {
     @Autowired
     private CronTaskRegistrar cronTaskRegistrar;
 
+    @ResponseBody
+    @GetMapping("{id}")
+    public RestResponse<Task> getTaskById(@PathVariable Long id) {
+        Task task = taskService.findTaskById(id);
+        System.out.println(task);
+        return RestResponse.ok("/tasks/" + id, task);
+    }
+
     @GetMapping
     public String taskList(
             @RequestParam(value = "page", required = false, defaultValue = "1") Integer page,
@@ -40,7 +48,6 @@ public class TaskController {
 
     @ResponseBody
     @PostMapping
-    @Transactional
     public RestResponse<Task> insertTask(@RequestBody Task task) {
         boolean success = taskService.insertTask(task);
         if (!success)
@@ -56,7 +63,6 @@ public class TaskController {
 
     @ResponseBody
     @PutMapping
-    @Transactional
     public RestResponse<Task> editTask(@RequestBody Task task) {
         Task oldTask = taskService.findTaskById(task.getId());
         boolean oldStatus = oldTask.getStatus();
@@ -70,6 +76,9 @@ public class TaskController {
             cronTaskRegistrar.removeCronTask(oldSchedulingRunnable);
             log.info("task size：{}", cronTaskRegistrar.getScheduledTasks().size());
         }
+        task.setBeanName(oldTask.getBeanName());
+        task.setMethodName(oldTask.getMethodName());
+        task.setCronExpression(oldTask.getCronExpression());
         if (task.getStatus()) {
             SchedulingRunnable schedulingRunnable = createSchedulingRunnable(task);
             cronTaskRegistrar.addCronTask(schedulingRunnable, task.getCronExpression());
@@ -80,7 +89,6 @@ public class TaskController {
 
     @ResponseBody
     @DeleteMapping
-    @Transactional
     public RestResponse<Task> deleteTask(@RequestParam Long id) {
         Task oldTask = taskService.findTaskById(id);
         boolean oldStatus = oldTask.getStatus();
